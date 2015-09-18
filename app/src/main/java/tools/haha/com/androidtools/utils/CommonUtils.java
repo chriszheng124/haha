@@ -1,6 +1,7 @@
-package tools.haha.com.androidtools;
+package tools.haha.com.androidtools.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
@@ -188,6 +189,11 @@ public class CommonUtils {
             }
         }
         return ret;
+    }
+
+    public int getStatusBarHeight(){
+        return Resources.getSystem().getDimensionPixelSize(
+                Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android"));
     }
 
 }
