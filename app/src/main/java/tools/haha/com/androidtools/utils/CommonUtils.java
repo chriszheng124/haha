@@ -2,6 +2,10 @@ package tools.haha.com.androidtools.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
@@ -191,9 +195,19 @@ public class CommonUtils {
         return ret;
     }
 
-    public int getStatusBarHeight(){
+    public static int getStatusBarHeight(){
         return Resources.getSystem().getDimensionPixelSize(
                 Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android"));
+    }
+
+    public static Drawable getStateListDrawable(String normalColor, String pressedColor){
+        StateListDrawable drawable = new StateListDrawable();
+        int pressed = android.R.attr.state_pressed;
+
+        drawable.addState(new int[]{pressed}, new ColorDrawable(Color.parseColor(pressedColor)));
+        drawable.addState(new int[]{}, new ColorDrawable(Color.parseColor(normalColor)));
+
+        return drawable;
     }
 
 }

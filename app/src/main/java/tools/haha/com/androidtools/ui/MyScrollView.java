@@ -1,14 +1,18 @@
 package tools.haha.com.androidtools.ui;
 
 import android.content.Context;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Scroller;
+
+import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 public class MyScrollView extends ViewGroup {
@@ -52,6 +56,7 @@ public class MyScrollView extends ViewGroup {
     private int mChildHeight;
     private int mOldScrollY;
 
+    private GestureDetector mGestureDetector;
 
     public MyScrollView(Context context) {
         super(context);
@@ -82,6 +87,7 @@ public class MyScrollView extends ViewGroup {
         if(mScroller == null){
             mScroller = new Scroller(getContext());
         }
+        mGestureDetector = new GestureDetector(this.getContext(), new MyGestureListener());
     }
 
     /**
@@ -316,6 +322,9 @@ public class MyScrollView extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        if(mGestureDetector.onTouchEvent(ev)) {
+            return true;
+        }
         final int action = ev.getAction() & MotionEvent.ACTION_MASK;
         if(DEBUG){
             Log.v(LOG_TAG, "onTouchEvent got action : " + action);
@@ -423,6 +432,57 @@ public class MyScrollView extends ViewGroup {
 
         public LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
+        }
+    }
+
+    private class MyGestureListener implements GestureDetector.OnGestureListener{
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if(Math.abs(velocityY) > Math.abs(velocityX)){
+                fling((int) -velocityX, (int) -velocityY);
+                return true;
+            }
+            return false;
+        }
+
+        private void fling(int velocityX, int velocityY) {
+            // Before flinging, aborts the current animation.
+            mScroller.forceFinished(true);
+            // Begins the animation
+            mScroller.fling(
+                    getScrollX(),
+                    getScrollY(),
+                    0,
+                    velocityY,
+                    0, 0,
+                    0, (getChildCount()-1)*getChildAt(0).getHeight());
+            // Invalidates to trigger computeScroll()
+            ViewCompat.postInvalidateOnAnimation(MyScrollView.this);
         }
     }
 }

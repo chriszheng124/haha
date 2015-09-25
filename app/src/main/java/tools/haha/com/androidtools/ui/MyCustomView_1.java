@@ -1,18 +1,24 @@
 package tools.haha.com.androidtools.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import tools.haha.com.androidtools.R;
+
 @SuppressWarnings("unused")
 public class MyCustomView_1 extends View {
-
+    private static final String MeasureText = "Hello World";
     private static int sCount = 0;
     private Paint mPaint;
-    private static final String MeasureText = "Hello World";
+    private Matrix mMatrix;
+    private Bitmap mSky;
 
     public MyCustomView_1(Context context) {
         super(context);
@@ -32,12 +38,14 @@ public class MyCustomView_1 extends View {
     private void init(){
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(Color.GRAY);
+        mMatrix = new Matrix();
+        mSky = BitmapFactory.decodeResource(getResources(), R.drawable.sky);
     }
 
-    private int measureWidth(int mesureSpec){
+    private int measureWidth(int measureSpec){
         int result;
-        int specMode = MeasureSpec.getMode(mesureSpec);
-        int specSize = MeasureSpec.getSize(mesureSpec);
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
         if(specMode == MeasureSpec.EXACTLY){
             result = specSize;
         }else{
@@ -51,10 +59,10 @@ public class MyCustomView_1 extends View {
         return result;
     }
 
-    private int measureHeght(int mesureSpec){
+    private int measureHeight(int measureSpec){
         int result;
-        int specMode = MeasureSpec.getMode(mesureSpec);
-        int specSize = MeasureSpec.getSize(mesureSpec);
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
         if(specMode == MeasureSpec.EXACTLY){
             result = specSize;
         }else{
@@ -70,20 +78,34 @@ public class MyCustomView_1 extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeght(heightMeasureSpec));
+        setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeight(heightMeasureSpec));
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        int w = getWidth();
-        int h = getHeight();
-        canvas.drawRect(0, 0, w, h, mPaint);
+        if(sCount++ % 3 == 0){
+            canvas.drawColor(Color.GRAY);
+            final int count = canvas.save();
+            //canvas.clipRect(0, 0, getMeasuredWidth(), 200);
+            //canvas.translate(0, 200);
+            //canvas.rotate(90);
+            //canvas.drawBitmap(mSky, 0, 0, null);
+            //mMatrix.setTranslate(0, -200);
+            //mMatrix.postTranslate(0, 200);
+            mMatrix.postRotate(10);
+            mMatrix.preTranslate(200, 0);
+            canvas.drawBitmap(mSky, mMatrix, null);
+            canvas.restoreToCount(count);
+        }else {
+            int w = getWidth();
+            int h = getHeight();
+            canvas.drawRect(0, 0, w, h, mPaint);
 
-        mPaint.setColor(Color.YELLOW);
-        mPaint.setTextSize(80);
-        String text = MeasureText + String.valueOf(sCount++);
-        canvas.drawText(text, getPaddingLeft(), getPaddingTop() - mPaint.ascent(), mPaint);
+            mPaint.setColor(Color.YELLOW);
+            mPaint.setTextSize(80);
+            String text = MeasureText + String.valueOf(sCount++);
+            canvas.drawText(text, getPaddingLeft(), getPaddingTop() - mPaint.ascent(), mPaint);
+        }
     }
 }
 
