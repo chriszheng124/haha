@@ -14,6 +14,7 @@ import java.util.List;
 
 import tools.haha.com.androidtools.utils.CommonUtils;
 
+@Deprecated
 @SuppressWarnings("unused")
 public class FlowLayout extends LinearLayout {
     private int mRowCount;

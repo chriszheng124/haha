@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import tools.haha.com.androidtools.R;
@@ -33,6 +34,12 @@ public class MyCustomView_1 extends View {
     public MyCustomView_1(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        sCount = 0;
     }
 
     private void init(){
@@ -83,25 +90,29 @@ public class MyCustomView_1 extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if(sCount++ % 3 == 0){
-            canvas.drawColor(Color.GRAY);
+        if(sCount++ == 0){
             final int count = canvas.save();
+            canvas.drawColor(Color.GRAY);
             //canvas.clipRect(0, 0, getMeasuredWidth(), 200);
-            //canvas.translate(0, 200);
+            //canvas.scale(1, 0.5f);
+            canvas.translate(0, 200);
             //canvas.rotate(90);
             //canvas.drawBitmap(mSky, 0, 0, null);
-            //mMatrix.setTranslate(0, -200);
+            //mMatrix.setTranslate(0, 200);
             //mMatrix.postTranslate(0, 200);
-            mMatrix.postRotate(10);
-            mMatrix.preTranslate(200, 0);
+            //mMatrix.postRotate(10);
+            //mMatrix.preTranslate(200, 0);
+            //mMatrix.setScale(1, 0.5f);
             canvas.drawBitmap(mSky, mMatrix, null);
             canvas.restoreToCount(count);
+            mPaint.setColor(Color.YELLOW);
+            canvas.drawCircle(100, 100, 100, mPaint);
         }else {
             int w = getWidth();
             int h = getHeight();
             canvas.drawRect(0, 0, w, h, mPaint);
-
             mPaint.setColor(Color.YELLOW);
+
             mPaint.setTextSize(80);
             String text = MeasureText + String.valueOf(sCount++);
             canvas.drawText(text, getPaddingLeft(), getPaddingTop() - mPaint.ascent(), mPaint);

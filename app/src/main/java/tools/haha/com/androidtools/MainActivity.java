@@ -2,10 +2,17 @@ package tools.haha.com.androidtools;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+
+import tools.haha.com.androidtools.ui.CircleDrawable;
+import tools.haha.com.androidtools.ui.RoundedDrawable;
 
 
 public class MainActivity extends Activity{
@@ -20,6 +27,15 @@ public class MainActivity extends Activity{
                 startActivity(MyScrollViewActivity.class);
             }
         });
+        ImageView imageView = (ImageView)findViewById(R.id.img_view_1);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sky);
+        imageView.setImageDrawable(new CircleDrawable(bitmap, 35, 0));
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
         test();
     }
 

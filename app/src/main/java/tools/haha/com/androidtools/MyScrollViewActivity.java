@@ -1,6 +1,8 @@
 package tools.haha.com.androidtools;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -10,15 +12,19 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
+import tools.haha.com.androidtools.ui.CircleDrawable;
 import tools.haha.com.androidtools.ui.FlowLayout;
 import tools.haha.com.androidtools.ui.MyCustomView_1;
 import tools.haha.com.androidtools.ui.MyFlowLayout;
 import tools.haha.com.androidtools.ui.MyScrollView;
+import tools.haha.com.androidtools.ui.RoundedBitmapDrawable;
+import tools.haha.com.androidtools.ui.RoundedDrawable;
 import tools.haha.com.androidtools.utils.CommonUtils;
 
 public class MyScrollViewActivity extends Activity{
@@ -39,9 +45,13 @@ public class MyScrollViewActivity extends Activity{
         setContentView(R.layout.myscroll_view_layout);
         MyScrollView v = (MyScrollView)findViewById(R.id.root);
         for (int i = 0; i<10; i++){
-            if(i%2 == 0) {
+            if(i == 0) {
                 MyCustomView_1 child_1 = new MyCustomView_1(this);
                 v.addView(createWrapper(child_1));
+            }else if(i == 1) {
+                v.addView(createWrapper(createRoundImageView()));
+            }else if(i == 2){
+                v.addView(createWrapper(createCircleImageView()));
             }else {
                 v.addView(createWrapper(createFlowLayout()));
             }
@@ -93,6 +103,27 @@ public class MyScrollViewActivity extends Activity{
                 PRESSED_COLOR_ARR[index]));
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         return tv;
+    }
+
+    private ImageView createRoundImageView(){
+        ImageView imageView = new ImageView(this);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sky);
+        //imageView.setImageDrawable(new RoundedDrawable(bitmap, 35, 0));
+        RoundedBitmapDrawable drawable = new RoundedBitmapDrawable(getResources(), bitmap);
+        drawable.setRadius(40);
+        drawable.setCircle(false);
+        imageView.setImageDrawable(drawable);
+        //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        return imageView;
+    }
+
+    private ImageView createCircleImageView(){
+        ImageView imageView = new ImageView(this);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sky);
+        imageView.setImageDrawable(new CircleDrawable(bitmap, 35, 5));
+
+        return imageView;
     }
 
 }

@@ -11,8 +11,13 @@ import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.util.TypedValue;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 @SuppressWarnings("unused")
-public class CommonUtils {
+public final class CommonUtils {
     public static final int NET_OFF = 0;    //无网络
     public static final int NET_UNKNOWN = 1;    //未知网络
     public static final int NET_WIFI = 2;    //WIFI网络
@@ -208,6 +213,49 @@ public class CommonUtils {
         drawable.addState(new int[]{}, new ColorDrawable(Color.parseColor(normalColor)));
 
         return drawable;
+    }
+
+    public static String getProcessName() {
+        File f = new File("/proc/self/cmdline");
+        InputStream reader = null;
+        String name = "";
+        try {
+            reader = new FileInputStream(f);
+            byte[] buffer = new byte[256];
+            int length = reader.read(buffer);
+            if (length > 0) {
+                name = new String(buffer, 0, length).trim();
+            }
+        } catch (Exception e) {
+            name = "";
+        } finally {
+            if (reader != null)
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    name = "";
+                }
+        }
+        return name;
+    }
+
+    /**
+     * Multiplies the color with the given alpha.
+     * @param color color to be multiplied
+     * @param alpha value between 0 and 255
+     * @return multiplied color
+     */
+    public static int multiplyColorAlpha(int color, int alpha) {
+        if (alpha == 255) {
+            return color;
+        }
+        if (alpha == 0) {
+            return color & 0x00FFFFFF;
+        }
+        alpha = alpha + (alpha >> 7); // make it 0..256
+        int colorAlpha = color >>> 24;
+        int multipliedAlpha = colorAlpha * alpha >> 8;
+        return (multipliedAlpha << 24) | (color & 0x00FFFFFF);
     }
 
 }
