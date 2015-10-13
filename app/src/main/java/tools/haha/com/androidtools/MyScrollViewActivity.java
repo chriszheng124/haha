@@ -23,6 +23,7 @@ import tools.haha.com.androidtools.ui.FlowLayout;
 import tools.haha.com.androidtools.ui.MyCustomView_1;
 import tools.haha.com.androidtools.ui.MyFlowLayout;
 import tools.haha.com.androidtools.ui.MyScrollView;
+import tools.haha.com.androidtools.ui.MySurfaceView;
 import tools.haha.com.androidtools.ui.RoundedBitmapDrawable;
 import tools.haha.com.androidtools.ui.RoundedDrawable;
 import tools.haha.com.androidtools.utils.CommonUtils;
@@ -46,12 +47,13 @@ public class MyScrollViewActivity extends Activity{
         MyScrollView v = (MyScrollView)findViewById(R.id.root);
         for (int i = 0; i<10; i++){
             if(i == 0) {
-                MyCustomView_1 child_1 = new MyCustomView_1(this);
-                v.addView(createWrapper(child_1));
+                v.addView(createWrapper(new MyCustomView_1(this)));
             }else if(i == 1) {
                 v.addView(createWrapper(createRoundImageView()));
-            }else if(i == 2){
+            }else if(i == 2) {
                 v.addView(createWrapper(createCircleImageView()));
+            }else if(i == 3){
+                v.addView(createWrapper(createSurfaceView()));
             }else {
                 v.addView(createWrapper(createFlowLayout()));
             }
@@ -124,6 +126,12 @@ public class MyScrollViewActivity extends Activity{
         imageView.setImageDrawable(new CircleDrawable(bitmap, 35, 5));
 
         return imageView;
+    }
+
+    private View createSurfaceView(){
+        MySurfaceView view = new MySurfaceView(this);
+
+        return view;
     }
 
 }

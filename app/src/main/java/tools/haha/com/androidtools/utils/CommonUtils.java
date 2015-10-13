@@ -3,18 +3,23 @@ package tools.haha.com.androidtools.utils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Display;
+import android.view.WindowManager;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 
 @SuppressWarnings("unused")
 public final class CommonUtils {
@@ -26,6 +31,8 @@ public final class CommonUtils {
     public static final int NET_4G = 16;   //4G网络
     public static final int NET_EXCEPTION = 32;   //获取网络状态失败
     public static final int NET_DEFAULT = NET_WIFI + NET_3G + NET_4G;
+
+    private static int sNavigationBarHeight = Integer.MIN_VALUE;
 
     public static class OperatorInfo {
         public String mSimMcc;
@@ -203,6 +210,68 @@ public final class CommonUtils {
     public static int getStatusBarHeight(){
         return Resources.getSystem().getDimensionPixelSize(
                 Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android"));
+    }
+
+    public static int getNavigationBarHeight(Context context) {
+        if (sNavigationBarHeight != Integer.MIN_VALUE) {
+            return sNavigationBarHeight;
+        }
+        return (sNavigationBarHeight = getNavigationHeightFromResource(context));
+    }
+
+    private static int getNavigationHeightFromResource(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        int navigationBarHeight = 0;
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("config_showNavigationBar",
+                "bool", "android");
+        if (resourceId > 0) {
+            boolean hasNav = resources.getBoolean(resourceId);
+            if (hasNav) {
+                resourceId = resources.getIdentifier("navigation_bar_height",
+                        "dimen", "android");
+                if (resourceId > 0) {
+                    navigationBarHeight = resources
+                            .getDimensionPixelSize(resourceId);
+                }
+            }
+        }
+
+        if (navigationBarHeight <= 0) {
+            DisplayMetrics dMetrics = new DisplayMetrics();
+            display.getMetrics(dMetrics);
+            int screenHeight = Math.max(dMetrics.widthPixels, dMetrics.heightPixels);
+            int realHeight = 0;
+            try {
+                Method mt = display.getClass().getMethod("getRealSize", Point.class);
+                Point size = new Point();
+                mt.invoke(display, size);
+                realHeight = Math.max(size.x, size.y);
+            } catch (NoSuchMethodException e) {
+                Method mt;
+                try {
+                    mt = display.getClass().getMethod("getRawHeight");
+                } catch (NoSuchMethodException e2) {
+                    try {
+                        mt = display.getClass().getMethod("getRealHeight");
+                    } catch (NoSuchMethodException e3) {
+                        return 0;
+                    }
+                }
+                if (mt != null) {
+                    try {
+                        realHeight = (Integer) mt.invoke(display);
+                    } catch (Exception e1) {
+                        return 0;
+                    }
+                }
+            } catch (Exception e) {
+                return 0;
+            }
+            navigationBarHeight = realHeight - screenHeight;
+        }
+        return navigationBarHeight;
     }
 
     public static Drawable getStateListDrawable(String normalColor, String pressedColor){

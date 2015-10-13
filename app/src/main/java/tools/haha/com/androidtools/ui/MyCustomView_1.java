@@ -90,18 +90,20 @@ public class MyCustomView_1 extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if(sCount++ == 0){
+        if(sCount == 0){
+            drawMultiLayer(canvas);
+        }else if(sCount++ == 1){
             final int count = canvas.save();
             canvas.drawColor(Color.GRAY);
             //canvas.clipRect(0, 0, getMeasuredWidth(), 200);
             //canvas.scale(1, 0.5f);
-            canvas.translate(0, 200);
+            //canvas.translate(0, 200);
             //canvas.rotate(90);
             //canvas.drawBitmap(mSky, 0, 0, null);
             //mMatrix.setTranslate(0, 200);
             //mMatrix.postTranslate(0, 200);
-            //mMatrix.postRotate(10);
-            //mMatrix.preTranslate(200, 0);
+            mMatrix.postRotate(10);
+            mMatrix.preTranslate(200, 0);
             //mMatrix.setScale(1, 0.5f);
             canvas.drawBitmap(mSky, mMatrix, null);
             canvas.restoreToCount(count);
@@ -110,6 +112,7 @@ public class MyCustomView_1 extends View {
         }else {
             int w = getWidth();
             int h = getHeight();
+            mPaint.setColor(Color.GRAY);
             canvas.drawRect(0, 0, w, h, mPaint);
             mPaint.setColor(Color.YELLOW);
 
@@ -117,6 +120,18 @@ public class MyCustomView_1 extends View {
             String text = MeasureText + String.valueOf(sCount++);
             canvas.drawText(text, getPaddingLeft(), getPaddingTop() - mPaint.ascent(), mPaint);
         }
+    }
+
+    private void drawMultiLayer(Canvas canvas){
+        canvas.drawColor(Color.WHITE);
+        canvas.translate(10, 10);
+        mPaint.setColor(Color.RED);
+        canvas.drawCircle(75, 75, 75, mPaint);
+        canvas.saveLayerAlpha(0, 0, 200, 200, 0x88, Canvas.ALL_SAVE_FLAG);
+        //canvas.saveLayer(0, 0, 200, 200, mPaint, Canvas.ALL_SAVE_FLAG);
+        mPaint.setColor(Color.BLUE);
+        canvas.drawCircle(125, 125, 75, mPaint);
+        canvas.restore();
     }
 }
 

@@ -14,6 +14,8 @@ import android.widget.Scroller;
 
 import java.util.logging.Logger;
 
+import tools.haha.com.androidtools.MyApp;
+
 @SuppressWarnings("unused")
 public class MyScrollView extends ViewGroup {
 
@@ -76,7 +78,7 @@ public class MyScrollView extends ViewGroup {
     private void init(){
         Context context = getContext();
         mTopShowingPage = 1;
-        final ViewConfiguration configuration = ViewConfiguration.get(context);
+        final ViewConfiguration configuration = ViewConfiguration.get(MyApp.getContext());
         final float density = context.getResources().getDisplayMetrics().density;
         mTouchSlop = configuration.getScaledPagingTouchSlop();
         mMinimumVelocity = (int) (MIN_FLING_VELOCITY * density);
