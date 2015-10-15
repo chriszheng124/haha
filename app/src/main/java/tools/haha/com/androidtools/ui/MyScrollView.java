@@ -1,6 +1,7 @@
 package tools.haha.com.androidtools.ui;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -136,7 +137,7 @@ public class MyScrollView extends ViewGroup {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         final int count = getChildCount();
         int childLeft = 0;
-        int childTop = 0;
+        int childTop;
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() != GONE) {
@@ -323,7 +324,7 @@ public class MyScrollView extends ViewGroup {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent ev) {
+    public boolean onTouchEvent(@NonNull MotionEvent ev) {
         if(mGestureDetector.onTouchEvent(ev)) {
             return true;
         }

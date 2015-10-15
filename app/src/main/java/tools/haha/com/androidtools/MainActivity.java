@@ -6,12 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
-import android.support.v4.widget.NestedScrollView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import tools.haha.com.androidtools.ui.CircleDrawable;
 import tools.haha.com.androidtools.ui.RoundedBitmapDrawable;
 
 
@@ -35,10 +34,9 @@ public class MainActivity extends Activity{
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                test();
             }
         });
-
-        test();
     }
 
     private void test(){

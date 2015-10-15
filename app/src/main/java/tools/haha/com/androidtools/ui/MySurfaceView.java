@@ -123,7 +123,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 while (mRunning){
                     doDraw();
                     try {
-                        Thread.sleep(600);
+                        Thread.sleep(100);
                     }catch (Exception e){
                         return;
                     }finally {
@@ -135,6 +135,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 }
             }
         }, "my_surface_view_thread");
+        mThread.setPriority(Thread.MIN_PRIORITY);
         mThread.start();
     }
 
