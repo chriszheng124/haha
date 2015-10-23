@@ -1,5 +1,6 @@
 package tools.haha.com.androidtools;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +12,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,11 +49,11 @@ public class MyScrollViewActivity extends Activity{
         MyScrollView v = (MyScrollView)findViewById(R.id.root);
         for (int i = 0; i<10; i++){
             if(i == 0) {
-                v.addView(createWrapper(new MyCustomView_1(this)));
+                v.addView(createWrapper(createCircleImageView()));
             }else if(i == 1) {
                 v.addView(createWrapper(createRoundImageView()));
             }else if(i == 2) {
-                v.addView(createWrapper(createCircleImageView()));
+                v.addView(createWrapper(new MyCustomView_1(this)));
             }else if(i == 3){
                 v.addView(createWrapper(createSurfaceView()));
             }else {
@@ -121,9 +123,27 @@ public class MyScrollViewActivity extends Activity{
     }
 
     private ImageView createCircleImageView(){
-        ImageView imageView = new ImageView(this);
+        final ImageView imageView = new ImageView(this);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sky);
         imageView.setImageDrawable(new CircleDrawable(bitmap, 35, 5));
+
+        final ViewTreeObserver.OnPreDrawListener observer = new ViewTreeObserver.OnPreDrawListener(){
+            @Override
+            public boolean onPreDraw() {
+                imageView.getViewTreeObserver().removeOnPreDrawListener(this);
+                ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(imageView, "alpha", 0, 1);
+                objectAnimator.setDuration(1000);
+                objectAnimator.start();
+                return false;
+            }
+        };
+        imageView.getViewTreeObserver().addOnPreDrawListener(observer);
+//        imageView.animate().alpha(1).withEndAction(new Runnable() {
+//            @Override
+//            public void run() {
+//                imageView.animate().alpha(1).setDuration(3000);
+//            }
+//        });
 
         return imageView;
     }

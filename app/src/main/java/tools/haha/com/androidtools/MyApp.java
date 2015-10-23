@@ -29,6 +29,6 @@ public class MyApp extends Application{
     }
 
     public static Context getContext(){
-        return sThis.getApplicationContext();
+        return sThis;
     }
 }
