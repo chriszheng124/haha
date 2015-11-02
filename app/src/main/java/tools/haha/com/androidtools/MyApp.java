@@ -2,6 +2,7 @@ package tools.haha.com.androidtools;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.StrictMode;
 
 import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
@@ -15,6 +16,22 @@ public class MyApp extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectDiskReads()
+                    .detectDiskWrites()
+                    .detectNetwork()   // or .detectAll() for all detectable problems
+                    .penaltyLog()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
+                    .detectActivityLeaks()
+                    .setClassInstanceLimit(MainActivity.class, 1)
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build());
+        }
         sThis = this;
 
         mRefWatcher = LeakCanary.install(this);
@@ -30,5 +47,16 @@ public class MyApp extends Application{
 
     public static Context getContext(){
         return sThis;
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        //TRIM_MEMORY_UI_HIDDEN
     }
 }

@@ -35,9 +35,14 @@ public class MainActivity extends Activity{
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                test();
+                startActivity(TestActivity.class);
             }
         });
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
     }
 
     private void test(){

@@ -16,6 +16,9 @@
         </activity>
 
         <activity android:name=".MyScrollViewActivity" />
+        <activity android:name=".TestActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".TestActivity_1" />
 
     </application>
 
