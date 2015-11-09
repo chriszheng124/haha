@@ -28,6 +28,7 @@ public class MyApp extends Application{
                     .detectLeakedClosableObjects()
                     .detectActivityLeaks()
                     .setClassInstanceLimit(MainActivity.class, 1)
+                    .penaltyDropBox()
                     .penaltyLog()
                     .penaltyDeath()
                     .build());

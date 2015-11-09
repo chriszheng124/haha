@@ -37,9 +37,19 @@ public class MyCustomView_1 extends View {
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         sCount = 0;
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
     }
 
     private void init(){
@@ -86,6 +96,11 @@ public class MyCustomView_1 extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeight(heightMeasureSpec));
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
     }
 
     @Override

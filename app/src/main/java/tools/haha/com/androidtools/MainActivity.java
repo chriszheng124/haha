@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -38,14 +37,17 @@ public class MainActivity extends Activity{
                 startActivity(TestActivity.class);
             }
         });
+//        Button button_2 = (Button)findViewById(R.id.send_broadcast);
+//        button_2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//            }
+//        });
     }
 
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
-    }
-
-    private void test(){
     }
 
     private void startActivity(Class<?> clazz){
