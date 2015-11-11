@@ -1,5 +1,6 @@
 package tools.haha.com.androidtools.ui;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -105,9 +106,14 @@ public class MyCustomView_1 extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if(sCount == 0){
+        try {
+            Thread.sleep(4000);
+        }catch (InterruptedException e){
+
+        }
+        if(sCount++ == 0){
             drawMultiLayer(canvas);
-        }else if(sCount++ == 1){
+        }else if(sCount == 1){
             final int count = canvas.save();
             canvas.drawColor(Color.GRAY);
             //canvas.clipRect(0, 0, getMeasuredWidth(), 200);
@@ -115,10 +121,10 @@ public class MyCustomView_1 extends View {
             //canvas.translate(0, 200);
             //canvas.rotate(90);
             //canvas.drawBitmap(mSky, 0, 0, null);
-            //mMatrix.setTranslate(0, 200);
+            mMatrix.setTranslate(0, -200);
             //mMatrix.postTranslate(0, 200);
-            mMatrix.postRotate(10);
-            mMatrix.preTranslate(200, 0);
+            //mMatrix.postRotate(10);
+            //mMatrix.preTranslate(200, 0);
             //mMatrix.setScale(1, 0.5f);
             canvas.drawBitmap(mSky, mMatrix, null);
             canvas.restoreToCount(count);

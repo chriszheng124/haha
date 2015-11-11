@@ -31,7 +31,7 @@ import tools.haha.com.androidtools.ui.RoundedDrawable;
 import tools.haha.com.androidtools.utils.CommonUtils;
 
 public class MyScrollViewActivity extends Activity{
-    private static final String TEXT_ARR[] = {"a", "99999999999999999111111111111112", "1", "a",
+    private static final String TEXT_ARR[] = {"abc", "99999999999999999111111111111112", "1", "a",
                 "b999", "sssssss", "dfdfdfdfdfd", "dddddddddd333333333", "eeeeeeeee",
                 "dk99999ssssssssss", "d780sssssssss", "dfdfdfdfdfdf", "333333333", "eeeeeeeeeeeeeeeeeeee",
                 "dk99999", "d780sssssssss", "dfdfdfdfdf", "3333", "eeeee", "w", "q", "s", "e", "xs", "12w", "end"};
@@ -54,8 +54,10 @@ public class MyScrollViewActivity extends Activity{
                 v.addView(createWrapper(createRoundImageView()));
             }else if(i == 2) {
                 v.addView(createWrapper(new MyCustomView_1(this)));
-            }else if(i == 3){
+            }else if(i == 3) {
                 v.addView(createWrapper(createSurfaceView()));
+            }else if(i == 4){
+                v.addView(createWrapper(new MyCustomView_1(this)));
             }else {
                 v.addView(createWrapper(createFlowLayout()));
             }
