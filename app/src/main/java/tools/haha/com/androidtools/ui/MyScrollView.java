@@ -79,6 +79,9 @@ public class MyScrollView extends ViewGroup {
     private void init(){
         Context context = getContext();
         mTopShowingPage = 1;
+        if(MyApp.getContext() == null){
+            Log.v("test_11", "ddddddddddddddddddddddddddddddddddddddddd");
+        }
         final ViewConfiguration configuration = ViewConfiguration.get(MyApp.getContext());
         final float density = context.getResources().getDisplayMetrics().density;
         mTouchSlop = configuration.getScaledPagingTouchSlop();

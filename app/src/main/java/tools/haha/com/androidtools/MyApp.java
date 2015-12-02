@@ -3,6 +3,8 @@ package tools.haha.com.androidtools;
 import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
+import android.os.Trace;
+import android.util.Log;
 
 import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
@@ -15,6 +17,7 @@ public class MyApp extends Application{
 
     @Override
     public void onCreate() {
+        Log.v("test_11", "MyApp onCreate");
         super.onCreate();
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

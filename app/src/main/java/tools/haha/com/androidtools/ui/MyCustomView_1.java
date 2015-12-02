@@ -106,11 +106,6 @@ public class MyCustomView_1 extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        try {
-            Thread.sleep(4000);
-        }catch (InterruptedException e){
-
-        }
         if(sCount++ == 0){
             drawMultiLayer(canvas);
         }else if(sCount == 1){
