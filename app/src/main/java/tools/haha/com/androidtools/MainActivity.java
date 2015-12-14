@@ -6,9 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Trace;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,14 +13,19 @@ import android.widget.ImageView;
 
 
 import tools.haha.com.androidtools.ui.RoundedBitmapDrawable;
+import tools.haha.com.dynamicload.Plugin;
 
 
 public class MainActivity extends Activity{
+    private Plugin mPlugin = new Plugin(this);
+
+    public MainActivity() {
+        super();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int pri = Looper.getMainLooper().getThread().getPriority();
-        Log.v("test_11", ""+pri);
         setContentView(R.layout.main_activity_layout);
         final ImageView imageView = (ImageView)findViewById(R.id.img_view_1);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sky);
@@ -51,7 +53,7 @@ public class MainActivity extends Activity{
 //            }
 //        });
 
-        Button startListViewBtn = (Button)findViewById(R.id.start_list_view);
+        final Button startListViewBtn = (Button)findViewById(R.id.start_list_view);
         startListViewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,11 +61,30 @@ public class MainActivity extends Activity{
             }
         });
 
+        Button pluginBtn = (Button)findViewById(R.id.load_plugin_btn);
+        pluginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPlugin.load("/sdcard/app-debug.apk");
+                Intent intent = new Intent();
+                intent.setClassName("tools.haha.com.plugin_1", "PluginMainActivity");
+                try{
+                    startActivity(intent);
+                }catch (Exception e){
+                    Log.v("test_11", e.getMessage());
+                }
+            }
+        });
     }
 
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private void startActivity(Class<?> clazz){

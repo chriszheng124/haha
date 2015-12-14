@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidTools.iml" filepath="$PROJECT_DIR$/AndroidTools.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dynamicload/dynamicload.iml" filepath="$PROJECT_DIR$/dynamicload/dynamicload.iml" />
+      <module fileurl="file://$PROJECT_DIR$/resource_1/resource_1.iml" filepath="$PROJECT_DIR$/resource_1/resource_1.iml" />
     </modules>
   </component>
 </project>

@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="tools.haha.com.androidtools">
+          package="tools.haha.com.androidtools"
+          android:sharedUserId="com.xxx.haha">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application android:allowBackup="true"
                  android:hardwareAccelerated="true"

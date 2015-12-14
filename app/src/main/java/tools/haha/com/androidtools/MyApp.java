@@ -17,7 +17,6 @@ public class MyApp extends Application{
 
     @Override
     public void onCreate() {
-        Log.v("test_11", "MyApp onCreate");
         super.onCreate();
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -29,8 +28,8 @@ public class MyApp extends Application{
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                     .detectLeakedSqlLiteObjects()
                     .detectLeakedClosableObjects()
-                    .detectActivityLeaks()
-                    .setClassInstanceLimit(MainActivity.class, 1)
+                    //.detectActivityLeaks()
+                    //.setClassInstanceLimit(MainActivity.class, 1)
                     .penaltyDropBox()
                     .penaltyLog()
                     .penaltyDeath()
