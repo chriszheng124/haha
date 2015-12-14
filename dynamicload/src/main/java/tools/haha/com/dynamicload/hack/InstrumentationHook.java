@@ -44,7 +44,6 @@ public class InstrumentationHook extends Instrumentation {
     public ActivityResult execStartActivity(
             Context who, IBinder contextThread, IBinder token, Activity target,
             Intent intent, int requestCode, Bundle options) {
-        createLoadedApkInfo(target);
         if(intent.hasExtra(ORIGINAL_CLS_KEY)){
             intent.removeExtra(ORIGINAL_CLS_KEY);
         }
@@ -96,7 +95,7 @@ public class InstrumentationHook extends Instrumentation {
         }
     }
 
-    public Activity newActivity(ClassLoader cl, String className,Intent intent)
+    public Activity newActivity(ClassLoader cl, String className, Intent intent)
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         try{
             boolean isPluginActivity = false;
@@ -125,6 +124,7 @@ public class InstrumentationHook extends Instrumentation {
         try {
             if(mActivitySet.contains(activity)) {
                 hackContextThemeWrapper(activity);
+                createLoadedApkInfo(activity);
                 hackContextImpl(activity);
             }
             mInstrumentation.callActivityOnCreate(activity, icicle);
@@ -154,6 +154,16 @@ public class InstrumentationHook extends Instrumentation {
             return null;
         }
         return mInstrumentation.newApplication(cl, className, context);
+    }
+
+    @Override
+    public void callActivityOnNewIntent(Activity activity, Intent intent) {
+        mInstrumentation.callActivityOnNewIntent(activity, intent);
+    }
+
+    @Override
+    public void callActivityOnResume(Activity activity) {
+        mInstrumentation.callActivityOnResume(activity);
     }
 
     private void hackContextThemeWrapper(Activity activity){
@@ -226,7 +236,7 @@ public class InstrumentationHook extends Instrumentation {
             Class<?> loadApkClazz = Class.forName("android.app.LoadedApk");
             Method makeApplicationMethod = loadApkClazz.getDeclaredMethod(
                     "makeApplication", boolean.class, Instrumentation.class);
-            Application app = (Application)makeApplicationMethod.invoke(mLoadedApk, false, mInstrumentation);
+            Application app = (Application)makeApplicationMethod.invoke(mLoadedApk, false, this);
             Field appLoadedApkField = Application.class.getDeclaredField("mLoadedApk");
             appLoadedApkField.set(app, mLoadedApk);
         }catch (Exception e){
@@ -343,6 +353,18 @@ public class InstrumentationHook extends Instrumentation {
 //            field.set(dst, field.get(dst));
 //        }catch (Exception e){
 //
+//        }
+//    }
+
+//    private void replaceActivityName(Activity activity, String name){
+//        try {
+//            Class<?> activityClazz = Activity.class;
+//            Field activityInfoField = activityClazz.getDeclaredField("mActivityInfo");
+//            ActivityInfo aInfo = (ActivityInfo)activityInfoField.get(activity);
+//            Class<?> aInfoClazz = ActivityInfo.class;
+//            Field activityName = aInfoClazz.getDeclaredField("name");
+//            activityName.set(aInfo, name);
+//        }catch (Exception e){
 //        }
 //    }
 

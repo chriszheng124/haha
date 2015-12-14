@@ -43,6 +43,10 @@ public class Plugin {
     }
 
     private void replaceInstrumentation(){
+        replaceInstrumentationOfActivity();
+    }
+
+    private void replaceInstrumentationOfActivity(){
         try{
             Field fieldInstrumentation = Activity.class.getDeclaredField("mInstrumentation");
             fieldInstrumentation.setAccessible(true);
@@ -58,42 +62,8 @@ public class Plugin {
             sInstrumentationReady = true;
         }catch (Exception e){
             if(PluginCfg.DEBUG){
-                Log.v(PluginCfg.TAG, "replaceInstrumentation error : " + e.getMessage());
+                Log.v(PluginCfg.TAG, "replaceInstrumentationOfActivity error : " + e.getMessage());
             }
         }
     }
-
-//    private void replaceResource(){
-//        try {
-//            Method method = AssetManager.class.getDeclaredMethod("addAssetPath", String.class);
-//            mAssetManager = AssetManager.class.newInstance();
-//            method.invoke(mAssetManager, mPluginPath);
-//            mResource = new Resources(mAssetManager,
-//                    mActivity.getResources().getDisplayMetrics(),
-//                    mActivity.getResources().getConfiguration());
-//        }catch (Exception e){
-//            if(PluginCfg.DEBUG){
-//                Log.v(PluginCfg.TAG, "addAssetPath failed " + e.getMessage());
-//            }
-//        }
-//    }
-
-//    private void replaceResource(){
-//        try {
-//            Method method = AssetManager.class.getDeclaredMethod("addAssetPath", String.class);
-//            Field contextField = ContextWrapper.class.getDeclaredField("mBase");
-//            contextField.setAccessible(true);
-//            Context context = (Context)contextField.get(mActivity);
-//            mAssetManager = context.getAssets();
-//            method.invoke(mAssetManager, mPluginPath);
-//            mResource = new Resources(mAssetManager,
-//                    mActivity.getResources().getDisplayMetrics(),
-//                    mActivity.getResources().getConfiguration());
-//        }catch (Exception e){
-//            if(PluginCfg.DEBUG){
-//                Log.v(PluginCfg.TAG, "addAssetPath failed " + e.getMessage());
-//            }
-//        }
-//    }
-
 }
