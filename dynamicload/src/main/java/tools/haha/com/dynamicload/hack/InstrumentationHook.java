@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 
@@ -28,12 +29,14 @@ import tools.haha.com.dynamicload.PluginCfg;
 import tools.haha.com.dynamicload.ProxyActivity;
 
 public class InstrumentationHook extends Instrumentation {
+    private static final String PLUGIN_STUB_NAME = "PluginStubActivity";
     private static final String ORIGINAL_CLS_KEY = "original_cls";
     private Instrumentation mInstrumentation;
     private ClassLoader mLoader;
     private Plugin mPlugin;
     private HashSet<Activity> mActivitySet = new HashSet<>();
     private Object mLoadedApk;
+    private ArrayMap<Activity, String> mRealActivityMap = new ArrayMap<>();
 
     public InstrumentationHook(Instrumentation instrumentation, ClassLoader loader, Plugin plugin){
         mInstrumentation = instrumentation;
@@ -101,7 +104,9 @@ public class InstrumentationHook extends Instrumentation {
             boolean isPluginActivity = false;
             String cls = intent.getStringExtra(ORIGINAL_CLS_KEY);
             if(!TextUtils.isEmpty(cls)){
-                className = cls;
+                String tmp = cls.substring(0, cls.lastIndexOf(".")+1);
+                tmp += PLUGIN_STUB_NAME;
+                className = tmp;
                 isPluginActivity = true;
             }
             Method method = Instrumentation.class.getDeclaredMethod(
@@ -109,6 +114,7 @@ public class InstrumentationHook extends Instrumentation {
             Activity activity = (Activity)method.invoke(mInstrumentation, mLoader, className, intent);
             if(isPluginActivity) {
                 mActivitySet.add(activity);
+                mRealActivityMap.put(activity, cls);
             }
             return activity;
 
@@ -126,8 +132,22 @@ public class InstrumentationHook extends Instrumentation {
                 hackContextThemeWrapper(activity);
                 createLoadedApkInfo(activity);
                 hackContextImpl(activity);
+
+                //start PluginMainActivity using hacked context
+                Intent intent = new Intent();
+                String cls = mRealActivityMap.get(activity);
+                if(!TextUtils.isEmpty(cls)){
+                    intent.setClassName(activity, cls);
+                }
+                activity.startActivity(intent);
+
+                //finish PluginStubActivity
+                activity.finish();
+
+                fakeCreateActivity(activity);
+            }else {
+                mInstrumentation.callActivityOnCreate(activity, icicle);
             }
-            mInstrumentation.callActivityOnCreate(activity, icicle);
         }catch (Exception e){
             if(PluginCfg.DEBUG){
                 e.printStackTrace();
@@ -190,7 +210,7 @@ public class InstrumentationHook extends Instrumentation {
             Field loadedApkField = clazz.getDeclaredField("mPackageInfo");
             loadedApkField.setAccessible(true);
             loadedApkField.set(activity.getBaseContext(), mLoadedApk);
-            makeApplication(activity);
+            //makeApplication();
         }catch (Exception e){
             if(PluginCfg.DEBUG){
                 Log.v(PluginCfg.TAG, "hackActivityThread error : " + e.getMessage());
@@ -231,7 +251,7 @@ public class InstrumentationHook extends Instrumentation {
         }
     }
 
-    private void makeApplication(Activity activity){
+    private void makeApplication(){
         try {
             Class<?> loadApkClazz = Class.forName("android.app.LoadedApk");
             Method makeApplicationMethod = loadApkClazz.getDeclaredMethod(
@@ -242,49 +262,6 @@ public class InstrumentationHook extends Instrumentation {
         }catch (Exception e){
         }
     }
-
-//    private Object getPluginApkInfo(Activity activity){
-//        Object loadedApk;
-//        try {
-//            Class<?> loadApkClazz = Class.forName("android.app.LoadedApk");
-//            Constructor<?> constructor = loadApkClazz.getDeclaredConstructor(
-//                    Class.forName("android.app.ActivityThread"),
-//                    ApplicationInfo.class,
-//                    Class.forName("android.content.res.CompatibilityInfo"),
-//                    Class.forName("android.app.ActivityThread"),
-//                    ClassLoader.class,
-//                    boolean.class,
-//                    boolean.class);
-//            Class<?> contextClazz = Class.forName("android.app.ContextImpl");
-//            Field loadedApkField = contextClazz.getDeclaredField("mPackageInfo");
-//            loadedApkField.setAccessible(true);
-//            Object apkInfo = loadedApkField.get(activity.getBaseContext());
-//
-//            ApplicationInfo applicationInfo = activity.getApplicationInfo();
-//
-//            Method getCompatibilityInfoMethod = Resources.class.getDeclaredMethod("getCompatibilityInfo");
-//            loadedApk = constructor.newInstance(
-//                    getFieldValue(apkInfo.getClass(), apkInfo, "mActivityThread"),
-//                    applicationInfo,
-//                    getCompatibilityInfoMethod.invoke(activity.getResources()),
-//                    getFieldValue(apkInfo.getClass(), apkInfo, "mActivityThread"),
-//                    mLoader,
-//                    getFieldValue(apkInfo.getClass(), apkInfo, "mSecurityViolation"),
-//                    getFieldValue(apkInfo.getClass(), apkInfo, "mIncludeCode"));
-//            assignValue(loadedApk, "mPackageName", getPackageInfo(activity,
-//                    mPlugin.getPluginPath()).activities[0].packageName);
-//
-//            Method makeApplicationMethod = loadApkClazz.getDeclaredMethod(
-//                    "makeApplication", boolean.class, Instrumentation.class);
-//            Application app = (Application)makeApplicationMethod.invoke(loadedApk, false, mInstrumentation);
-//            Field appLoadedApkField = Application.class.getDeclaredField("mLoadedApk");
-//            appLoadedApkField.set(app, loadedApk);
-//
-//        }catch (Exception e){
-//            return null;
-//        }
-//        return loadedApk;
-//    }
 
     private Object getFieldValue(Class clazz, Object object, String fieldName){
         try {
@@ -324,48 +301,12 @@ public class InstrumentationHook extends Instrumentation {
                 PackageManager.GET_ACTIVITIES | PackageManager.GET_SERVICES);
     }
 
-//    private Object getPluginApkInfo(Activity activity){
-//        Object loadedApk;
-//        try {
-//            Class<?> loadApkClazz = Class.forName("android.app.LoadedApk");
-//            Constructor<?> constructor = loadApkClazz.getDeclaredConstructor(Class.forName("android.app.ActivityThread"));
-//            Class<?> contextClazz = Class.forName("android.app.ContextImpl");
-//            Field loadedApkField = contextClazz.getDeclaredField("mPackageInfo");
-//            loadedApkField.setAccessible(true);
-//            Object apkInfo = loadedApkField.get(activity.getBaseContext());
-//            Field field = loadApkClazz.getDeclaredField("mActivityThread");
-//            field.setAccessible(true);
-//            loadedApk = constructor.newInstance(field.get(apkInfo));
-//
-//            assignValue(apkInfo, loadedApk, "mApplicationInfo");
-//            assignValue(apkInfo, loadedApk, "");
-//
-//        }catch (Exception e){
-//            return null;
-//        }
-//        return loadedApk;
-//    }
-//
-//    private void assignValue(Object src, Object dst, String fieldName){
-//        try {
-//            Field field = src.getClass().getDeclaredField(fieldName);
-//            field.setAccessible(true);
-//            field.set(dst, field.get(dst));
-//        }catch (Exception e){
-//
-//        }
-//    }
-
-//    private void replaceActivityName(Activity activity, String name){
-//        try {
-//            Class<?> activityClazz = Activity.class;
-//            Field activityInfoField = activityClazz.getDeclaredField("mActivityInfo");
-//            ActivityInfo aInfo = (ActivityInfo)activityInfoField.get(activity);
-//            Class<?> aInfoClazz = ActivityInfo.class;
-//            Field activityName = aInfoClazz.getDeclaredField("name");
-//            activityName.set(aInfo, name);
-//        }catch (Exception e){
-//        }
-//    }
-
+    private void fakeCreateActivity(Activity activity){
+        try {
+            Field calledField = Activity.class.getDeclaredField("mCalled");
+            calledField.setAccessible(true);
+            calledField.set(activity, true);
+        }catch (Exception e){
+        }
+    }
 }
