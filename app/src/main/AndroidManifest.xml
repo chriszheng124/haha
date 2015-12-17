@@ -24,6 +24,10 @@
         <activity android:name=".TestActivity_1" />
         <activity android:name=".ListViewActivity" />
 
+        <activity android:name="tools.haha.com.plugin_1.PluginMainActivity" android:launchMode="singleTask"/>
+        <activity android:name="tools.haha.com.plugin_1.PluginActivity_1" android:launchMode="singleTask"/>
+        <activity android:name="tools.haha.com.plugin_1.PluginActivity_2" android:launchMode="standard"/>
+
     </application>
 
 </manifest>

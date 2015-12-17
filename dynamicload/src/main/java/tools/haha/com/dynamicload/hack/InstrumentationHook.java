@@ -14,31 +14,26 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
-import android.text.TextUtils;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 
 import tools.haha.com.dynamicload.Plugin;
 import tools.haha.com.dynamicload.PluginCfg;
-import tools.haha.com.dynamicload.ProxyActivity;
+import tools.haha.com.dynamicload.PluginClassLoader;
 
 public class InstrumentationHook extends Instrumentation {
-    private static final String PLUGIN_STUB_NAME = "PluginStubActivity";
-    private static final String ORIGINAL_CLS_KEY = "original_cls";
     private Instrumentation mInstrumentation;
     private ClassLoader mLoader;
     private Plugin mPlugin;
     private HashSet<Activity> mActivitySet = new HashSet<>();
-    private Object mLoadedApk;
-    private ArrayMap<Activity, String> mRealActivityMap = new ArrayMap<>();
 
-    public InstrumentationHook(Instrumentation instrumentation, ClassLoader loader, Plugin plugin){
+    public InstrumentationHook(Instrumentation instrumentation,
+                               ClassLoader loader,
+                               Plugin plugin){
         mInstrumentation = instrumentation;
         mLoader = loader;
         mPlugin = plugin;
@@ -47,25 +42,6 @@ public class InstrumentationHook extends Instrumentation {
     public ActivityResult execStartActivity(
             Context who, IBinder contextThread, IBinder token, Activity target,
             Intent intent, int requestCode, Bundle options) {
-        if(intent.hasExtra(ORIGINAL_CLS_KEY)){
-            intent.removeExtra(ORIGINAL_CLS_KEY);
-        }
-        ActivityInfo activityInfo = intent.resolveActivityInfo(who.getPackageManager(), 0);
-        if(activityInfo == null && intent.getComponent() != null){
-            String className = intent.getComponent().getClassName();
-            String pkgName = intent.getComponent().getPackageName();
-            if(!TextUtils.isEmpty(className) && !TextUtils.isEmpty(pkgName)){
-                if(className.contains(".")){
-                    className = className.substring(className.lastIndexOf(".")+1);
-                }
-                StringBuilder sb = new StringBuilder();
-                sb.append(pkgName).append(".").append(className);
-                intent.putExtra(ORIGINAL_CLS_KEY, sb.toString());
-                intent.setClassName(who, ProxyActivity.class.getName());
-            }else {
-                return null;
-            }
-        }
         try {
             Method method = Instrumentation.class.getDeclaredMethod("execStartActivity",
                     Context.class, IBinder.class, IBinder.class,
@@ -101,23 +77,11 @@ public class InstrumentationHook extends Instrumentation {
     public Activity newActivity(ClassLoader cl, String className, Intent intent)
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         try{
-            boolean isPluginActivity = false;
-            String cls = intent.getStringExtra(ORIGINAL_CLS_KEY);
-            if(!TextUtils.isEmpty(cls)){
-                String tmp = cls.substring(0, cls.lastIndexOf(".")+1);
-                tmp += PLUGIN_STUB_NAME;
-                className = tmp;
-                isPluginActivity = true;
-            }
             Method method = Instrumentation.class.getDeclaredMethod(
                     "newActivity", ClassLoader.class, String.class, Intent.class);
             Activity activity = (Activity)method.invoke(mInstrumentation, mLoader, className, intent);
-            if(isPluginActivity) {
-                mActivitySet.add(activity);
-                mRealActivityMap.put(activity, cls);
-            }
-            return activity;
 
+            return activity;
         }catch (Exception e){
             if(PluginCfg.DEBUG){
                 Log.v(PluginCfg.TAG, "newActivity error : " + e.getMessage());
@@ -128,26 +92,12 @@ public class InstrumentationHook extends Instrumentation {
 
     public void callActivityOnCreate(Activity activity, Bundle icicle) {
         try {
-            if(mActivitySet.contains(activity)) {
+            if(PluginClassLoader.hasLoaded(activity.getClass().getCanonicalName())) {
                 hackContextThemeWrapper(activity);
-                createLoadedApkInfo(activity);
+                //makeApplication();
                 hackContextImpl(activity);
-
-                //start PluginMainActivity using hacked context
-                Intent intent = new Intent();
-                String cls = mRealActivityMap.get(activity);
-                if(!TextUtils.isEmpty(cls)){
-                    intent.setClassName(activity, cls);
-                }
-                activity.startActivity(intent);
-
-                //finish PluginStubActivity
-                activity.finish();
-
-                fakeCreateActivity(activity);
-            }else {
-                mInstrumentation.callActivityOnCreate(activity, icicle);
             }
+            mInstrumentation.callActivityOnCreate(activity, icicle);
         }catch (Exception e){
             if(PluginCfg.DEBUG){
                 e.printStackTrace();
@@ -209,45 +159,11 @@ public class InstrumentationHook extends Instrumentation {
             Class<?> clazz = Class.forName("android.app.ContextImpl");
             Field loadedApkField = clazz.getDeclaredField("mPackageInfo");
             loadedApkField.setAccessible(true);
-            loadedApkField.set(activity.getBaseContext(), mLoadedApk);
-            //makeApplication();
+            loadedApkField.set(activity.getBaseContext(), mPlugin.getLoadedApk());
         }catch (Exception e){
             if(PluginCfg.DEBUG){
                 Log.v(PluginCfg.TAG, "hackActivityThread error : " + e.getMessage());
             }
-        }
-    }
-
-    private void createLoadedApkInfo(Activity activity){
-        try {
-            Class<?> loadApkClazz = Class.forName("android.app.LoadedApk");
-            Constructor<?> constructor = loadApkClazz.getDeclaredConstructor(
-                    Class.forName("android.app.ActivityThread"),
-                    ApplicationInfo.class,
-                    Class.forName("android.content.res.CompatibilityInfo"),
-                    Class.forName("android.app.ActivityThread"),
-                    ClassLoader.class,
-                    boolean.class,
-                    boolean.class);
-            Class<?> contextClazz = Class.forName("android.app.ContextImpl");
-            Field loadedApkField = contextClazz.getDeclaredField("mPackageInfo");
-            loadedApkField.setAccessible(true);
-            Object apkInfo = loadedApkField.get(activity.getBaseContext());
-
-            ApplicationInfo applicationInfo = activity.getApplicationInfo();
-
-            Method getCompatibilityInfoMethod = Resources.class.getDeclaredMethod("getCompatibilityInfo");
-            mLoadedApk = constructor.newInstance(
-                    getFieldValue(apkInfo.getClass(), apkInfo, "mActivityThread"),
-                    applicationInfo,
-                    getCompatibilityInfoMethod.invoke(activity.getResources()),
-                    getFieldValue(apkInfo.getClass(), apkInfo, "mActivityThread"),
-                    mLoader,
-                    getFieldValue(apkInfo.getClass(), apkInfo, "mSecurityViolation"),
-                    getFieldValue(apkInfo.getClass(), apkInfo, "mIncludeCode"));
-            assignValue(mLoadedApk, "mPackageName", getPackageInfo(activity,
-                    mPlugin.getPluginPath()).activities[0].packageName);
-        }catch (Exception e){
         }
     }
 
@@ -256,10 +172,11 @@ public class InstrumentationHook extends Instrumentation {
             Class<?> loadApkClazz = Class.forName("android.app.LoadedApk");
             Method makeApplicationMethod = loadApkClazz.getDeclaredMethod(
                     "makeApplication", boolean.class, Instrumentation.class);
-            Application app = (Application)makeApplicationMethod.invoke(mLoadedApk, false, this);
+            Application app = (Application)makeApplicationMethod.invoke(mPlugin.getLoadedApk(), true, this);
             Field appLoadedApkField = Application.class.getDeclaredField("mLoadedApk");
-            appLoadedApkField.set(app, mLoadedApk);
+            appLoadedApkField.set(app, mPlugin.getLoadedApk());
         }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -299,14 +216,5 @@ public class InstrumentationHook extends Instrumentation {
             throws PackageManager.NameNotFoundException {
         return cxt.getPackageManager().getPackageArchiveInfo(apkPath,
                 PackageManager.GET_ACTIVITIES | PackageManager.GET_SERVICES);
-    }
-
-    private void fakeCreateActivity(Activity activity){
-        try {
-            Field calledField = Activity.class.getDeclaredField("mCalled");
-            calledField.setAccessible(true);
-            calledField.set(activity, true);
-        }catch (Exception e){
-        }
     }
 }

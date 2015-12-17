@@ -3,6 +3,8 @@ package tools.haha.com.dynamicload;
 import android.content.Context;
 import android.util.ArrayMap;
 
+import java.util.HashSet;
+
 import dalvik.system.DexClassLoader;
 
 public class PluginClassLoader extends DexClassLoader{
@@ -10,6 +12,7 @@ public class PluginClassLoader extends DexClassLoader{
     private final static String LIB_DIR = "plugin_lib_dir";
 
     private static ArrayMap<String, PluginClassLoader> sLoaders = new ArrayMap<>();
+    private static HashSet<String> sClassNameOfLoadedClass = new HashSet<String>();
 
     public PluginClassLoader(String dexPath, String optimizedDirectory, String libraryPath, ClassLoader parent) {
         super(dexPath, optimizedDirectory, libraryPath, parent);
@@ -24,5 +27,21 @@ public class PluginClassLoader extends DexClassLoader{
             sLoaders.put(dexPath, loader);
         }
         return loader;
+    }
+
+    public static boolean hasLoaded(String name){
+        return sClassNameOfLoadedClass.contains(name);
+    }
+
+    @Override
+    public Class<?> findClass(String name) throws ClassNotFoundException {
+        Class<?> clazz;
+        try {
+            clazz = super.findClass(name);
+            sClassNameOfLoadedClass.add(name);
+        }catch (ClassNotFoundException e){
+            throw e;
+        }
+        return clazz;
     }
 }

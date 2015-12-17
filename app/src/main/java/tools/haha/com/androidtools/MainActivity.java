@@ -17,7 +17,7 @@ import tools.haha.com.dynamicload.Plugin;
 
 
 public class MainActivity extends Activity{
-    private Plugin mPlugin = new Plugin(this);
+    private Plugin mPlugin;
 
     public MainActivity() {
         super();
@@ -65,9 +65,11 @@ public class MainActivity extends Activity{
         pluginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPlugin.load("/sdcard/app-debug.apk");
+                mPlugin = new Plugin(MainActivity.this, "/sdcard/app-debug.apk");
+                mPlugin.load();
                 Intent intent = new Intent();
-                intent.setClassName("tools.haha.com.plugin_1", "PluginMainActivity");
+                //intent.setClassName("tools.haha.com.plugin_1", "PluginMainActivity");
+                intent.setClassName(MainActivity.this, "tools.haha.com.plugin_1.PluginMainActivity");
                 try{
                     startActivity(intent);
                 }catch (Exception e){
