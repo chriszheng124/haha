@@ -13,12 +13,9 @@ import android.widget.ImageView;
 
 
 import tools.haha.com.androidtools.ui.RoundedBitmapDrawable;
-import tools.haha.com.dynamicload.Plugin;
 
 
 public class MainActivity extends Activity{
-    private Plugin mPlugin;
-
     public MainActivity() {
         super();
     }
@@ -58,23 +55,6 @@ public class MainActivity extends Activity{
             @Override
             public void onClick(View v) {
                 startActivity(ListViewActivity.class);
-            }
-        });
-
-        Button pluginBtn = (Button)findViewById(R.id.load_plugin_btn);
-        pluginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPlugin = new Plugin(MainActivity.this, "/sdcard/app-debug.apk");
-                mPlugin.load();
-                Intent intent = new Intent();
-                //intent.setClassName("tools.haha.com.plugin_1", "PluginMainActivity");
-                intent.setClassName(MainActivity.this, "tools.haha.com.plugin_1.PluginMainActivity");
-                try{
-                    startActivity(intent);
-                }catch (Exception e){
-                    Log.v("test_11", e.getMessage());
-                }
             }
         });
     }

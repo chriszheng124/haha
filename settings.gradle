@@ -1,1 +1,1 @@
-include ':app', ':dynamicload', ':resource_1'
+include ':app'

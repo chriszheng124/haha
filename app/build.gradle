@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
     defaultConfig {
         applicationId "tools.haha.com.androidtools"
         minSdkVersion 19
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -17,16 +17,20 @@ android {
         }
     }
     productFlavors {
+        acdd {
+            aaptOptions.additionalParameters '--ACDD-resoure-id', '0x5c', '--ACDD-shared-resources', rootProject.file("public.xml").getAbsolutePath()
+        }
+        normal {
+        }
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.0'
+    //provided files('libs/android-support-v7.jar')
+    compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.facebook.stetho:stetho:1.2.0'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3'
-    compile 'com.android.support:support-annotations:22.2.0'
-    compile project(':dynamicload')
-    compile project(':resource_1')
+    //compile 'com.android.support:support-annotations:22.2.0'
 }

@@ -17,35 +17,36 @@ public class MyApp extends Application{
 
     @Override
     public void onCreate() {
+        Log.v("_Plugin_", "MyApp:onCreate was called");
         super.onCreate();
-        if (BuildConfig.DEBUG) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                    .detectDiskReads()
-                    .detectDiskWrites()
-                    .detectNetwork()   // or .detectAll() for all detectable problems
-                    .penaltyLog()
-                    .build());
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                    .detectLeakedSqlLiteObjects()
-                    .detectLeakedClosableObjects()
-                    //.detectActivityLeaks()
-                    //.setClassInstanceLimit(MainActivity.class, 1)
-                    .penaltyDropBox()
-                    .penaltyLog()
-                    .penaltyDeath()
-                    .build());
-        }
+//        if (BuildConfig.DEBUG) {
+//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//                    .detectDiskReads()
+//                    .detectDiskWrites()
+//                    .detectNetwork()   // or .detectAll() for all detectable problems
+//                    .penaltyLog()
+//                    .build());
+//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                    .detectLeakedSqlLiteObjects()
+//                    .detectLeakedClosableObjects()
+//                    //.detectActivityLeaks()
+//                    //.setClassInstanceLimit(MainActivity.class, 1)
+//                    .penaltyDropBox()
+//                    .penaltyLog()
+//                    .penaltyDeath()
+//                    .build());
+//        }
         sThis = this;
 
-        mRefWatcher = LeakCanary.install(this);
-
-        Stetho.initialize(
-            Stetho.newInitializerBuilder(this)
-                    .enableDumpapp(
-                            Stetho.defaultDumperPluginsProvider(this))
-                    .enableWebKitInspector(
-                            Stetho.defaultInspectorModulesProvider(this))
-                    .build());
+//        mRefWatcher = LeakCanary.install(this);
+//
+//        Stetho.initialize(
+//            Stetho.newInitializerBuilder(this)
+//                    .enableDumpapp(
+//                            Stetho.defaultDumperPluginsProvider(this))
+//                    .enableWebKitInspector(
+//                            Stetho.defaultInspectorModulesProvider(this))
+//                    .build());
     }
 
     public static Context getContext(){
