@@ -1,21 +1,30 @@
 package tools.haha.com.androidtools;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import android.os.IBinder;
+import android.renderscript.ScriptGroup;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 import tools.haha.com.androidtools.ui.RoundedBitmapDrawable;
 
 
-public class MainActivity extends Activity{
+public class MainActivity extends Activity implements View.OnClickListener{
+
+    private MyLocalService mBoundService;
+    private boolean mBound;
+
     public MainActivity() {
         super();
     }
@@ -29,34 +38,71 @@ public class MainActivity extends Activity{
         RoundedBitmapDrawable roundedBitmapDrawable = new RoundedBitmapDrawable(getResources(), bitmap);
         roundedBitmapDrawable.setRadius(55);
         imageView.setImageDrawable(roundedBitmapDrawable);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(TestActivity.class);
-            }
-        });
-        final Button button_1 = (Button)findViewById(R.id.scroll_view_button);
-        button_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(MyScrollViewActivity.class);
-            }
-        });
+    }
 
-//        Button button_2 = (Button)findViewById(R.id.send_broadcast);
-//        button_2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//            }
-//        });
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            mBoundService = ((MyLocalService.LocalBinder)service).getService();
+            mBoundService.testService();
+            //mBound = true;
 
-        final Button startListViewBtn = (Button)findViewById(R.id.start_list_view);
-        startListViewBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            Toast.makeText(MainActivity.this, "service connected",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mBoundService = null;
+            //mBound = false;
+            Toast.makeText(MainActivity.this, "service disconnected",
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private ServiceConnection mRemoteConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            Toast.makeText(MainActivity.this, "service connected",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            Toast.makeText(MainActivity.this, "service disconnected",
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.start_list_view:
                 startActivity(ListViewActivity.class);
-            }
-        });
+                break;
+            case R.id.start_local_service:
+                Intent intent = new Intent();
+                intent.setClassName(this, MyLocalService.class.getName());
+                startService(intent);
+                break;
+            case R.id.bind_local_service:
+                Intent intent2 = new Intent();
+                intent2.setClassName(this, MyLocalService.class.getName());
+                mBound = bindService(intent2, mConnection, BIND_AUTO_CREATE);
+                break;
+            case R.id.scroll_view_button:
+                startActivity(MyScrollViewActivity.class);
+                break;
+            case R.id.img_view_1:
+                startActivity(TestActivity.class);
+                break;
+            case R.id.start_remote_service:
+                Intent intent3 = new Intent();
+                intent3.setClassName(this, MyRemoteService.class.getName());
+                startService(intent3);
+                break;
+            case R.id.bind_remote_service:
+                Intent intent4 = new Intent();
+                intent4.setClassName(this, MyRemoteService.class.getName());
+                bindService(intent4, mRemoteConnection, BIND_AUTO_CREATE);
+                break;
+        }
     }
 
     @Override
@@ -67,6 +113,9 @@ public class MainActivity extends Activity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(mBound){
+            unbindService(mConnection);
+        }
     }
 
     private void startActivity(Class<?> clazz){

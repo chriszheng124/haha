@@ -20,9 +20,13 @@
         </activity>
 
         <activity android:name=".MyScrollViewActivity" />
-        <activity android:name=".TestActivity" />
+        <activity android:name=".TestActivity" android:launchMode="singleTask"/>
         <activity android:name=".TestActivity_1" />
         <activity android:name=".ListViewActivity" />
+
+        <!-- service-->
+        <service android:name=".MyLocalService" />
+        <service android:name=".MyRemoteService" android:process=":service_1" />
 
     </application>
 

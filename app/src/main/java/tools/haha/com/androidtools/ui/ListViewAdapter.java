@@ -1,6 +1,7 @@
 package tools.haha.com.androidtools.ui;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -9,10 +10,12 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ListViewAdapter extends BaseAdapter{
     private Context mContext;
     private ArrayList<String> mDataList;
+    private HashMap<Integer, Integer> mViewHeightMap;
 
     public ListViewAdapter(Context context){
         mContext = context;
@@ -46,6 +49,14 @@ public class ListViewAdapter extends BaseAdapter{
         }else{
             ((TextView)convertView).setText(mDataList.get(position));
         }
+
+//        if(mViewHeightMap.containsKey(position-1)){
+//            totalHeight = mViewHeightMap.get(position-1);
+//        }
+//        if(!mViewHeightMap.containsKey(position)) {
+//            mViewHeightMap.put(position, currentItemHeight + totalHeight);
+//        }
+
         return convertView;
     }
 
@@ -62,4 +73,30 @@ public class ListViewAdapter extends BaseAdapter{
     class ViewHolder{
         View view;
     }
+
+//    public int getScrollY(int position){
+//        if(mViewHeightMap.containsKey(position)){
+//            return mViewHeightMap.get(position);
+//        }
+//        int currentItemHeight;
+//        NewsData data = mProvider.loadNewsDataByPosition(position);
+//        if(data instanceof INewsProxy.News){
+//            INewsProxy.News newsItem = (INewsProxy.News)(data);
+//            if(TextUtils.isEmpty(newsItem.mUrl)){
+//                currentItemHeight = TEXTURE_NEWS_VIEW_HEIGHT;
+//            }else if(newsItem.mDisplayType.equalsIgnoreCase(INewsProxy.News.DISPLAY_TYPE_SMALL)){
+//                currentItemHeight = NORMAL_NEWS_VIEW_HEIGHT;
+//            }else if(newsItem.mDisplayType.equalsIgnoreCase(INewsProxy.News.DISPLAY_TYPE_BIG)){
+//                currentItemHeight = LARGE_PIC_NEWS_VIEW_HEIGHT;
+//            }else {
+//                currentItemHeight = 0;
+//            }
+//        }else if(data instanceof INativeAd){
+//            currentItemHeight = NORMAL_NEWS_VIEW_HEIGHT;
+//        }else {
+//            currentItemHeight = 0;
+//        }
+//        return currentItemHeight;
+//    }
+
 }
