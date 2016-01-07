@@ -1,4 +1,4 @@
-package tools.haha.com.androidtools;
+package tools.haha.com.androidtools.demo;
 
 import android.app.Service;
 import android.content.Intent;

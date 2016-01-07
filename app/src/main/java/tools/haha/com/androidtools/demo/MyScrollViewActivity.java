@@ -1,4 +1,4 @@
-package tools.haha.com.androidtools;
+package tools.haha.com.androidtools.demo;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import tools.haha.com.androidtools.R;
 import tools.haha.com.androidtools.ui.CircleDrawable;
 import tools.haha.com.androidtools.ui.FlowLayout;
 import tools.haha.com.androidtools.ui.MyCustomView_1;

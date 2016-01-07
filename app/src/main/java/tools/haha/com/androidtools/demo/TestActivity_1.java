@@ -1,10 +1,12 @@
-package tools.haha.com.androidtools;
+package tools.haha.com.androidtools.demo;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import tools.haha.com.androidtools.R;
 
 public class TestActivity_1 extends Activity{
     private TestThread mThread;

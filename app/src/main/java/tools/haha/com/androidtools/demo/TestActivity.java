@@ -1,15 +1,12 @@
-package tools.haha.com.androidtools;
+package tools.haha.com.androidtools.demo;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.method.CharacterPickerDialog;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import tools.haha.com.androidtools.R;
 import tools.haha.com.androidtools.ui.MyCustomView_1;
 
 public class TestActivity extends Activity{

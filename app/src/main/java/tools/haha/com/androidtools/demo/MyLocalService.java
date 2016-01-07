@@ -1,4 +1,4 @@
-package tools.haha.com.androidtools;
+package tools.haha.com.androidtools.demo;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,6 +7,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
+
+import tools.haha.com.androidtools.R;
 
 public class MyLocalService extends Service{
     public static final String TAG = "_Plugin_";

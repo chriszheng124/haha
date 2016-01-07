@@ -1,12 +1,14 @@
-package tools.haha.com.androidtools;
+package tools.haha.com.androidtools.demo;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import tools.haha.com.androidtools.R;
 import tools.haha.com.androidtools.ui.ListViewAdapter;
 
 public class ListViewActivity extends Activity{
@@ -14,6 +16,7 @@ public class ListViewActivity extends Activity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v("dexposed", "ListViewActivity::OnCreate was called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_view_activity_layout);
         mListView = (ListView)findViewById(R.id.my_list_view);

@@ -1,17 +1,15 @@
-package tools.haha.com.androidtools;
+package tools.haha.com.androidtools.demo;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.StrictMode;
-import android.os.Trace;
 import android.util.Log;
 
-import com.facebook.stetho.Stetho;
-import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.taobao.android.dexposed.DexposedBridge;
 
 @SuppressWarnings("unused")
 public class MyApp extends Application{
+    public static boolean sCanDexPosed;
     private static MyApp sThis;
     private RefWatcher mRefWatcher;
 
@@ -19,6 +17,9 @@ public class MyApp extends Application{
     public void onCreate() {
         Log.v("_Plugin_", "MyApp:onCreate was called");
         super.onCreate();
+        if(DexposedBridge.canDexposed(this)){
+            sCanDexPosed = true;
+        }
 //        if (BuildConfig.DEBUG) {
 //            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 //                    .detectDiskReads()
@@ -30,7 +31,7 @@ public class MyApp extends Application{
 //                    .detectLeakedSqlLiteObjects()
 //                    .detectLeakedClosableObjects()
 //                    //.detectActivityLeaks()
-//                    //.setClassInstanceLimit(MainActivity.class, 1)
+//                    //.setClassInstanceLimit(DemoMainActivity.class, 1)
 //                    .penaltyDropBox()
 //                    .penaltyLog()
 //                    .penaltyDeath()

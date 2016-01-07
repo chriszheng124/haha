@@ -13,9 +13,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Scroller;
 
-import java.util.logging.Logger;
-
-import tools.haha.com.androidtools.MyApp;
+import tools.haha.com.androidtools.demo.MyApp;
 
 @SuppressWarnings("unused")
 public class MyScrollView extends ViewGroup {

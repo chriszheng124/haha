@@ -33,4 +33,5 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3'
     //compile 'com.android.support:support-annotations:22.2.0'
+    compile 'com.taobao.android:dexposed:0.1.1@aar'
 }
