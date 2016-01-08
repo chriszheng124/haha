@@ -7,7 +7,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 
 import dalvik.system.DexClassLoader;
-import tools.haha.com.androidtools.BusProvider;
+import tools.haha.com.androidtools.BusFactory;
 
 public class PatchLoader {
     private static final String PATCH_ENTRY_METHOD = "install";
@@ -40,7 +40,7 @@ public class PatchLoader {
                 if(event == null){
                     event = new PatchNotification.PatchSuccess();
                 }
-                BusProvider.getBus().post(event);
+                BusFactory.getBus().post(event);
             }
         }.execute();
     }

@@ -21,7 +21,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_layout);
-        BusProvider.getBus().register(this);
+        BusFactory.getBus().register(this);
     }
 
     @Override
