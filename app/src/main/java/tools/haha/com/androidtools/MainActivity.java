@@ -6,18 +6,27 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.squareup.otto.Subscribe;
+
 import tools.haha.com.androidtools.demo.DemoMainActivity;
-import tools.haha.com.androidtools.hotfix.HotfixException;
 import tools.haha.com.androidtools.hotfix.PatchLoader;
+import tools.haha.com.androidtools.hotfix.PatchNotification;
 
 
 public class MainActivity extends Activity implements View.OnClickListener{
+    private static final String PATCH_MAIN = "zzh.com.patcha.PatchMain";
     private static final String PATCH_PATH = "/sdcard/patcha-debug.apk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_layout);
+        BusProvider.getBus().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -35,11 +44,18 @@ public class MainActivity extends Activity implements View.OnClickListener{
     }
 
     private void runPatch(){
-        try {
-            PatchLoader.load(this, PATCH_PATH);
+        PatchLoader patchLoader = new PatchLoader(this, PATCH_PATH, PATCH_MAIN);
+        patchLoader.load();
+    }
+
+    @Subscribe
+    public void onPatchEvent(PatchNotification.PatchEvent event){
+        if(event instanceof PatchNotification.PatchSuccess){
             Toast.makeText(this, "Make patch succeed", Toast.LENGTH_SHORT).show();
-        }catch (HotfixException e){
-            Toast.makeText(this, "Make patch failed cause " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }else if (event instanceof PatchNotification.PatchFail){
+            Toast.makeText(this,
+                    "Make patch failed cause " + ((PatchNotification.PatchFail) event).getMessage(),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 }

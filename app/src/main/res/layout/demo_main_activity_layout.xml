@@ -69,4 +69,11 @@
             android:layout_height="50dp"/>
     </LinearLayout>
 
+    <Button
+        android:id="@+id/btn_perf_test"
+        android:text="PerfTest"
+        android:onClick="onClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>

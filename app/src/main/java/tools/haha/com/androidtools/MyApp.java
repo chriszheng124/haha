@@ -1,24 +1,32 @@
-package tools.haha.com.androidtools.demo;
+package tools.haha.com.androidtools;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Process;
 import android.util.Log;
 
 import com.squareup.leakcanary.RefWatcher;
 import com.taobao.android.dexposed.DexposedBridge;
+
+import tools.haha.com.androidtools.perf_monitor.RunnableMetrics;
+import tools.haha.com.androidtools.perf_monitor.WatchDog;
 
 @SuppressWarnings("unused")
 public class MyApp extends Application{
     public static boolean sCanDexPosed;
     private static MyApp sThis;
     private RefWatcher mRefWatcher;
+    private WatchDog mWatchDog = new WatchDog("watchDog", Process.THREAD_PRIORITY_DISPLAY);
+    private RunnableMetrics mRunnableMetrics = new RunnableMetrics();
 
     @Override
     public void onCreate() {
         Log.v("_Plugin_", "MyApp:onCreate was called");
         super.onCreate();
+        mWatchDog.start();
         if(DexposedBridge.canDexposed(this)){
             sCanDexPosed = true;
+            mRunnableMetrics.start();
         }
 //        if (BuildConfig.DEBUG) {
 //            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

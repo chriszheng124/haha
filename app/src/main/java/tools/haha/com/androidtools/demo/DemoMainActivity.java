@@ -109,6 +109,11 @@ public class DemoMainActivity extends Activity implements View.OnClickListener{
                 intent4.setClassName(this, MyRemoteService.class.getName());
                 bindService(intent4, mRemoteConnection, BIND_AUTO_CREATE);
                 break;
+            case R.id.btn_perf_test:
+                Intent intent5 = new Intent();
+                intent5.setClassName(this, PerfTestDemo.class.getName());
+                startActivity(intent5);
+                break;
         }
     }
 
