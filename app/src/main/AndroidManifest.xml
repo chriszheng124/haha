@@ -25,6 +25,7 @@
         <activity android:name=".demo.TestActivity_1" />
         <activity android:name=".demo.ListViewActivity" />
         <activity android:name=".demo.PerfTestDemo" />
+        <activity android:name=".demo.DrawerActivity" />
 
         <!-- service-->
         <service android:name=".demo.MyLocalService" />

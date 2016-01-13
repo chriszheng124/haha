@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 
 import tools.haha.com.androidtools.R;
+import tools.haha.com.androidtools.ui.MyDrawerLayout;
 import tools.haha.com.androidtools.ui.RoundedBitmapDrawable;
 
 
@@ -24,6 +25,7 @@ public class DemoMainActivity extends Activity implements View.OnClickListener{
 
     private MyLocalService mBoundService;
     private boolean mBound;
+    private MyDrawerLayout mDrawer;
 
     public DemoMainActivity() {
         super();
@@ -34,13 +36,15 @@ public class DemoMainActivity extends Activity implements View.OnClickListener{
         Log.v("dexposed", "DemoMainActivity::OnCreate was called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.demo_main_activity_layout);
-        View rootView = findViewById(R.id.root);
-        rootView.setBackgroundColor(getColor());
+        View root = findViewById(R.id.root);
+        root.setBackgroundColor(getColor());
         final ImageView imageView = (ImageView)findViewById(R.id.img_view_1);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sky);
         RoundedBitmapDrawable roundedBitmapDrawable = new RoundedBitmapDrawable(getResources(), bitmap);
         roundedBitmapDrawable.setRadius(55);
         imageView.setImageDrawable(roundedBitmapDrawable);
+
+        mDrawer = (MyDrawerLayout)findViewById(R.id.drawer);
     }
 
     private int getColor(){
@@ -113,6 +117,14 @@ public class DemoMainActivity extends Activity implements View.OnClickListener{
                 Intent intent5 = new Intent();
                 intent5.setClassName(this, PerfTestDemo.class.getName());
                 startActivity(intent5);
+                break;
+            case R.id.btn_open_drawer:
+                mDrawer.setVisibility(View.VISIBLE);
+                break;
+            case R.id.start_drawer_activity:
+                Intent intent6 = new Intent();
+                intent6.setClassName(this, DrawerActivity.class.getName());
+                startActivity(intent6);
                 break;
         }
     }
