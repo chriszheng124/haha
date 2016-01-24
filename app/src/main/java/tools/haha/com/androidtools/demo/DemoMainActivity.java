@@ -7,14 +7,18 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.os.IBinder;
+import android.os.MemoryFile;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+
+import java.nio.ByteBuffer;
 
 import tools.haha.com.androidtools.R;
 import tools.haha.com.androidtools.ui.MyDrawerLayout;
@@ -26,6 +30,23 @@ public class DemoMainActivity extends Activity implements View.OnClickListener{
     private MyLocalService mBoundService;
     private boolean mBound;
     private MyDrawerLayout mDrawer;
+
+    static {
+        long begin = System.currentTimeMillis();
+        Log.v("123---", "begin time = " + begin);
+        System.loadLibrary("jni-demo");
+        Log.v("123---", "end time = " + (System.currentTimeMillis() - begin));
+    }
+
+    static {
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                //System.loadLibrary("jni-demo");
+                return null;
+            }
+        }.execute();
+    }
 
     public DemoMainActivity() {
         super();
@@ -126,6 +147,11 @@ public class DemoMainActivity extends Activity implements View.OnClickListener{
                 intent6.setClassName(this, DrawerActivity.class.getName());
                 startActivity(intent6);
                 break;
+            case R.id.native_op:
+                //testMemory();
+                nativeTest(513);
+                //nativeStaticFunc();
+                break;
         }
     }
 
@@ -140,10 +166,38 @@ public class DemoMainActivity extends Activity implements View.OnClickListener{
         if(mBound){
             unbindService(mConnection);
         }
+        try {
+            //Thread.sleep(1000*5);
+        }catch (Exception e){
+
+        }
     }
 
     private void startActivity(Class<?> clazz){
         Intent intent = new Intent(this, clazz);
         startActivity(intent);
     }
+
+    private void testMemory(){
+        for (int i = 0; i < 20; ++i){
+            long ptr = nativeAllocate(1024*1024*128);
+            nativeFree(ptr);
+
+            byte[] data = new byte[1024*1024*50];
+            data[1] = '2';
+//            data = null;
+
+            nativeWrite(0, data, data.length);
+        }
+    }
+
+    public void throwException(){
+        throw new RuntimeException("throwException got called");
+    }
+
+    private native long nativeAllocate(int len);
+    private native void nativeWrite(long ptr, byte[] data, int count);
+    private native void nativeFree(long ptr);
+    private native void nativeTest(int count);
+    private static native void nativeStaticFunc();
 }

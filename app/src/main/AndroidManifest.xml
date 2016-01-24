@@ -19,9 +19,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".demo.DemoMainActivity" />
+        <activity android:name=".demo.DemoMainActivity" android:launchMode="singleTask"/>
         <activity android:name=".demo.MyScrollViewActivity" />
-        <activity android:name=".demo.TestActivity" android:launchMode="singleTask"/>
+        <activity android:name=".demo.TestActivity" />
         <activity android:name=".demo.TestActivity_1" />
         <activity android:name=".demo.ListViewActivity" />
         <activity android:name=".demo.PerfTestDemo" />

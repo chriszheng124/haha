@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,11 @@ public class TestActivity extends Activity{
         button_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(TestActivity_1.class);
+                Intent intent = new Intent();
+                intent.setClassName(TestActivity.this, TestActivity_1.class.getName());
+                intent.putExtra("qqq", "123");
+                startActivityForResult(intent, 10);
+                //startActivity(TestActivity_1.class);
                 //view_1.animate().withLayer().alpha(1).alpha(0).setDuration(1000).start();
             }
         });
@@ -87,6 +92,11 @@ public class TestActivity extends Activity{
                 mAnimator.setDuration(0);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void change(View view){

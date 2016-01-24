@@ -28,4 +28,25 @@
              android:layout_height="wrap_content"
              layout="@layout/test_merge_layout" />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <tools.haha.com.androidtools.demo.ViewDemo
+            android:id="@+id/view_demo"
+            android:src="@drawable/buildings"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"/>
+
+        <TextView
+            android:background="#ff00"
+            android:id="@+id/tv_3"
+            android:visibility="gone"
+            android:text="fff"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"/>
+
+    </FrameLayout>
+
 </LinearLayout>

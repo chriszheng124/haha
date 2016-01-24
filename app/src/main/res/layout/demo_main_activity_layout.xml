@@ -93,12 +93,17 @@
                 android:id="@+id/start_drawer_activity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            <Button
+                android:onClick="onClick"
+                android:text="nativeOp"
+                android:id="@+id/native_op"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <tools.haha.com.androidtools.ui.MyDrawerLayout
             android:id="@+id/drawer"
             android:visibility="gone"
-
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout

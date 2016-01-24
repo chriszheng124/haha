@@ -23,10 +23,10 @@ public class MyApp extends Application{
     public void onCreate() {
         Log.v("_Plugin_", "MyApp:onCreate was called");
         super.onCreate();
-        mWatchDog.start();
+        //mWatchDog.start();
         if(DexposedBridge.canDexposed(this)){
             sCanDexPosed = true;
-            mRunnableMetrics.start();
+            //mRunnableMetrics.start();
         }
 //        if (BuildConfig.DEBUG) {
 //            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
